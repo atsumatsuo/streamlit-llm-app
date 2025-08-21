@@ -1,5 +1,5 @@
-streamlit==1.36.0
-openai==1.40.2
 langchain==0.2.12
 langchain-openai==0.1.20
+openai==1.40.2
+streamlit==1.36.0
 tiktoken==0.7.0

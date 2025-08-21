@@ -1,14 +1,11 @@
 
+
 import streamlit as st
-from langchain.chat_models import ChatOpenAI
-from langchain.schema import SystemMessage, HumanMessage
-import os
-from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import SystemMessage, HumanMessage
 
-
-# .envからAPIキーを読み込む
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# Streamlit CloudのSecretsからAPIキーを取得
+OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY", "")
 
 # 専門家タイプごとのシステムメッセージ
 EXPERT_SYSTEM_MESSAGES = {
@@ -19,14 +16,19 @@ EXPERT_SYSTEM_MESSAGES = {
 }
 
 
+
 def get_llm_response(input_text: str, expert_type: str) -> str:
     system_message = EXPERT_SYSTEM_MESSAGES.get(expert_type, "あなたは優秀なアシスタントです。")
-    chat = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7, openai_api_key=OPENAI_API_KEY)
+    chat = ChatOpenAI(
+        model="gpt-4.0-mini",
+        temperature=0.7,
+        api_key=OPENAI_API_KEY
+    )
     messages = [
         SystemMessage(content=system_message),
         HumanMessage(content=input_text)
     ]
-    response = chat(messages)
+    response = chat.invoke(messages)
     return response.content
 
 
