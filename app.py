@@ -4,23 +4,33 @@ import streamlit as st
 from dotenv import load_dotenv
 
 def show_debug():
+    import importlib.metadata as md  # ← 関数内で確実に定義
     st.sidebar.header("🛠 Debug")
-    # バージョン確認（安全）
+
+    def ver(name: str):
+        try:
+            return md.version(name)
+        except Exception:
+            return "(not installed)"
+
+    # バージョン表示
     st.sidebar.write({
-        "streamlit": md.version("streamlit"),
-        "openai": md.version("openai"),
-        "langchain": md.version("langchain"),
-        "langchain-openai": md.version("langchain-openai"),
-        "httpx": md.version("httpx"),
+        "streamlit": ver("streamlit"),
+        "openai": ver("openai"),
+        "langchain": ver("langchain"),
+        "langchain-openai": ver("langchain-openai"),
+        "httpx": ver("httpx"),
     })
-    # プロキシ系だけを表示（APIキー等は表示しない）
+
+    # プロキシ系環境変数の有無を表示（値があるものだけ）
     keys = [
         "HTTP_PROXY","HTTPS_PROXY","ALL_PROXY",
         "http_proxy","https_proxy","all_proxy",
         "OPENAI_PROXY","PROXIES","proxies"
     ]
-    st.sidebar.subheader("Proxy envs (setのみ表示)")
+    st.sidebar.subheader("Proxy envs (set only)")
     st.sidebar.json({k: os.environ.get(k) for k in keys if os.environ.get(k)})
+
 
 # チェックボックスでON/OFFできるように
 if st.sidebar.checkbox("Show debug info", value=True):
@@ -43,6 +53,8 @@ from openai import OpenAIq
 import httpx
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
+
+import importlib.metadata as md
 
 # --- ④ OpenAI公式クライアントを自分で作って ChatOpenAI に渡す ---
 # プロキシが不要ならそのまま
