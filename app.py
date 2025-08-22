@@ -49,7 +49,7 @@ if not OPENAI_API_KEY:
     st.error("OpenAI APIキーがありません（.env か Secrets を設定してください）")
     st.stop()
 
-from openai import OpenAIq
+from openai import OpenAI
 import httpx
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
